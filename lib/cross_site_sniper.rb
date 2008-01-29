@@ -10,6 +10,10 @@ module ActiveRecord #:nodoc:
         # Let ActiveRecord define it's methods first.
         define_attribute_methods_without_html_escaping
         
+        #Bail outta here if we're in an STI subclass situation.
+        #Primary class will get the magic methods.
+        return unless descends_from_active_record?
+        
         content_columns.each do |column|
           next unless [:string,:text].include?(column.type)
           define_method("#{column.name}_with_html_escaping") do
