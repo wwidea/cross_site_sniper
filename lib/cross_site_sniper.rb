@@ -15,7 +15,13 @@ module ActiveRecord #:nodoc:
         return unless descends_from_active_record?
         
         content_columns.each do |column|
+          #Only escape string and text fields
           next unless [:string,:text].include?(column.type)
+          
+          #Only escape fields that had their methods generated automatically.
+          #so as not to interfere if the class defined it's own accessor method.
+          next unless generated_methods.include?(column.name)
+          
           define_method("#{column.name}_with_html_escaping") do
             
             # Retrieve the raw data.

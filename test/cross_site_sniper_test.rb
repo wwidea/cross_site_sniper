@@ -24,10 +24,20 @@ class CrossSiteSniperTest < Test::Unit::TestCase
     assert_equal('&lt;b&gt;One&lt;/b&gt;',hunter.name_with_html_escaping)
     assert_equal('<b>One</b>',hunter.name_without_html_escaping)
     assert_equal('<b>One</b>',hunter[:name])
+    
+    assert_equal('<b>Overriden</b>',hunter.description)
+    assert_equal(false,hunter.respond_to?('description_with_html_escaping'))
+    assert_equal(false,hunter.respond_to?('description_without_html_escaping'))
+    assert_equal('<b>One Description</b>',hunter[:description])
   end
 end
 
-class SnipeHunter < ActiveRecord::Base; end
+class SnipeHunter < ActiveRecord::Base
+  
+  #make default description unescaped
+  def description; '<b>Overriden</b>'; end
+    
+end
   
 def setup_db
   ActiveRecord::Schema.define(:version => 1) do
