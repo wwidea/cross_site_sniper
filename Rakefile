@@ -21,3 +21,16 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('MIT-LICENSE')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
+
+desc 'Measures test coverage using rcov'
+task :rcov do
+  rm_f "coverage"
+  rm_f "coverage.data"
+  rcov = "rcov --rails --aggregate coverage.data --text-summary -Ilib"
+  system("#{rcov} --html #{Dir.glob('test/**/*_test.rb').join(' ')}")
+  if PLATFORM['darwin'] #Mac
+    system("open coverage/index.html") 
+  elsif PLATFORM[/linux/] #Ubuntu, etc.
+    system("/etc/alternatives/x-www-browser coverage/index.html")
+  end
+end
