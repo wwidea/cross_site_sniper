@@ -14,6 +14,8 @@ will be double escaped. This will only be of concern however in cases of legitim
 escaped characters, where, for instance, users may actually see '&amp;' displayed on a webpage
 instead of an expected '&'.
 
+See the html_escape[link:classes/ActiveRecord/CrossSiteSniperExtensions/ClassMethods.html#M000001] method to fine tune which fields to automatically escape.
+
 == Example
 
 === Before Cross Site Sniper
