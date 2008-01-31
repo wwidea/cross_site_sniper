@@ -37,7 +37,7 @@ usually escaped characters.
 
 == Installation
 
-script/plugin install -x http://xss.rubyforge.org/svn/cross_site_sniper/trunk
+  script/plugin install -x http://xss.rubyforge.org/svn/cross_site_sniper/trunk
 
 == Copyright
 
