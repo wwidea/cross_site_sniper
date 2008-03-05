@@ -35,6 +35,9 @@ By not escaping data accessed via the hash method (eg. @quiz[:question]), forms
 prepopulate with the *unescaped* data, allowing user friendly legitimate uses of
 usually escaped characters. 
 
+Cross Site Sniper also supports calling <method_name>_without_html_escaping on
+non-column methods to temporarily disable html escaping for that method call.
+(eg. @person.some_computed_value_without_html_escaping)
 == Installation
 
   script/plugin install -x http://xss.rubyforge.org/svn/cross_site_sniper/trunk

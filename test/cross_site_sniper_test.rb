@@ -32,6 +32,9 @@ class CrossSiteSniperTest < Test::Unit::TestCase
     assert_equal(false,hunter.respond_to?('title_with_html_escaping'))
     assert_equal(false,hunter.respond_to?('title_without_html_escaping'))
     
+    assert_equal('&lt;b&gt;One&lt;/b&gt;(42)',hunter.name_and_age)
+    assert_equal('<b>One</b>(42)',hunter.name_and_age_without_html_escaping)
+    
     assert_equal('<b>Overriden</b>',hunter.description)
     assert_equal(false,hunter.respond_to?('description_with_html_escaping'))
     assert_equal(false,hunter.respond_to?('description_without_html_escaping'))
@@ -55,7 +58,8 @@ class SnipeHunter < ActiveRecord::Base
   
   #make description unescaped
   def description; '<b>Overriden</b>'; end
-    
+  
+  def name_and_age; "#{name}(#{age})"; end
 end
 
 class Snipe < ActiveRecord::Base
@@ -69,6 +73,10 @@ class Leprechaun < ActiveRecord::Base
 end
 
 def setup_db
+  #Supress annoying Schema creation output when tests run
+  old_stdout = $stdout
+  $stdout = StringIO.new
+  
   ActiveRecord::Schema.define(:version => 1) do
     create_table :snipe_hunters do |t|
       t.column :name, :string
@@ -87,6 +95,9 @@ def setup_db
       t.column :name, :string
     end
   end
+  
+  #Re-enable stdout
+  $stdout = old_stdout
 end
 
 def teardown_db

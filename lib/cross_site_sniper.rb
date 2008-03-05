@@ -35,6 +35,9 @@ module ActiveRecord #:nodoc:
             # Retrieve the raw data.
             val = send("#{column.name}_without_html_escaping")
             
+            #if htmlescaping is disabled, just send it as is.
+            return val if @html_escaping_disabled
+            
             # Only escape strings. Other data types, such
             # as 'nil', should be returned uncorrupted.
             val.is_a?(String) ? ERB::Util::h(val) : val
@@ -51,6 +54,19 @@ module ActiveRecord #:nodoc:
         
       end
       alias_method_chain :define_attribute_methods, :html_escaping
+      
+      def method_missing(method_sym,*args,&blk)
+        #catch without_html_escaping for non-column methods and simulate it
+        if method_sym.to_s[/(.+)_without_html_escaping/]
+          original_method = $1
+          @html_escaping_disabled = true
+          val = self.send(original_method)
+          @html_escaping_disabled = false
+          return val
+        else
+          super
+        end
+      end
     end
   end
   
