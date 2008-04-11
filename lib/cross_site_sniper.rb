@@ -12,7 +12,12 @@ module ActiveRecord #:nodoc:
         
         #Bail outta here if we're in an STI subclass situation.
         #Primary class will get the magic methods.
-        return unless descends_from_active_record?
+        #!! originally added due to double escaping in STI models
+        #!! then removed because STI models stopped escaping at all
+        #!! and doulble escaping could not be reproduced. If double
+        #!! escaping re-appears, need to isolate exactly when and why
+        #!! to properly deal with it. 
+        #return unless descends_from_active_record?
         
         content_columns.each do |column|
           #Only escape string and text fields
