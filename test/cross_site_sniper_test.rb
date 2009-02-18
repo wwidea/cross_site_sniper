@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'rubygems'
-gem 'activerecord', '>= 2.0.2'
+gem 'activerecord', '>= 2.3.0'
 require 'active_record'
 require 'erb'
 require "#{File.dirname(__FILE__)}/../init"
@@ -12,7 +12,7 @@ class CrossSiteSniperTest < Test::Unit::TestCase
   def setup
     setup_db
     @hunter = SnipeHunter.create(:name => '<b>One</b>', :title => '<b>One Title</b>', :description => '<b>One Description</b>',:age => 42)
-    @snipe = Snipe.create(:species => '<b>Fitch</b>', :genus => '<b>Abercrombie</b>')
+    @snipe = Snipe.create(:species => '<b>Fitch</b>', :genus => '<b>Abercrombie</b>', :snipe_hunter => @hunter)
     @leprechaun = Leprechaun.create(:name => '<b>Clover McGillicuty</b>')
   end
   
@@ -47,12 +47,15 @@ class CrossSiteSniperTest < Test::Unit::TestCase
     assert_equal('&lt;b&gt;Fitch&lt;/b&gt;',snipe.species)
     assert_equal('<b>Abercrombie</b>',snipe.genus)
     
+    assert_equal('&lt;b&gt;Fitch&lt;/b&gt;',hunter.first_snipe_species)
+    assert_equal('<b>Fitch</b>',hunter.first_snipe_species_without_html_escaping)
+    
     assert_equal('<b>Clover McGillicuty</b>',leprechaun.name)
   end
 end
 
 class SnipeHunter < ActiveRecord::Base
-  
+  has_many :snipes
   #make title unescaped
   html_escape :except => :title
   
@@ -60,9 +63,12 @@ class SnipeHunter < ActiveRecord::Base
   def description; '<b>Overriden</b>'; end
   
   def name_and_age; "#{name}(#{age})"; end
+  
+  def first_snipe_species; snipes.first.species; end
 end
 
 class Snipe < ActiveRecord::Base
+  belongs_to :snipe_hunter
   #only escape species
   html_escape :only => :species
 end
@@ -87,6 +93,7 @@ def setup_db
     end
     
     create_table :snipes do |t|
+      t.column :snipe_hunter_id, :integer
       t.column :species, :string
       t.column :genus, :string
     end

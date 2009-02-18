@@ -41,7 +41,7 @@ module ActiveRecord #:nodoc:
             val = send("#{column.name}_without_html_escaping")
             
             #if htmlescaping is disabled, just send it as is.
-            return val if @html_escaping_disabled
+            return val if CrossSiteSniper.disabled?
             
             # Only escape strings. Other data types, such
             # as 'nil', should be returned uncorrupted.
@@ -64,9 +64,9 @@ module ActiveRecord #:nodoc:
         #catch without_html_escaping for non-column methods and simulate it
         if method_sym.to_s[/(.+)_without_html_escaping/]
           original_method = $1
-          @html_escaping_disabled = true
+          CrossSiteSniper.disabled = true
           val = self.send(original_method)
-          @html_escaping_disabled = false
+          CrossSiteSniper.disabled = false
           return val
         else
           super
@@ -121,5 +121,15 @@ module ActiveRecord #:nodoc:
       end
       
     end
+  end
+end
+
+class CrossSiteSniper
+  def self.disabled?
+    @disabled
+  end
+  
+  def self.disabled=(x)
+    @disabled = x
   end
 end
