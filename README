@@ -40,7 +40,7 @@ non-column methods to temporarily disable html escaping for that method call.
 (eg. @person.some_computed_value_without_html_escaping)
 == Installation
 
-  script/plugin install -x http://xss.rubyforge.org/svn/cross_site_sniper/trunk
+  script/plugin install git://github.com/wwidea/cross_site_sniper.git
 
 == Copyright
 
